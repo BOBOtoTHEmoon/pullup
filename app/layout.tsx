@@ -2,9 +2,24 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { AppProvider } from '@/components/AppProvider';
 
+const description = 'Tickets for parties, concerts and meetups near you. Pay by transfer, split the cost with friends, and get in with one scan.';
+
 export const metadata: Metadata = {
-  title: 'Pullup',
-  description: 'Tickets for parties, concerts and meetups near you.',
+  title: { default: 'Pullup: find the party', template: '%s | Pullup' },
+  description,
+  applicationName: 'Pullup',
+  openGraph: {
+    type: 'website',
+    siteName: 'Pullup',
+    title: 'Pullup: find the party, pull up with the squad',
+    description,
+    locale: 'en_NG',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Pullup: find the party, pull up with the squad',
+    description,
+  },
 };
 
 export const viewport: Viewport = {

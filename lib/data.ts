@@ -46,6 +46,7 @@ export type EventItem = {
   palette: number;
   location: LocationId;
   access: 'paid' | 'approval';
+  soldOut?: boolean;
 };
 
 const e = (
@@ -91,12 +92,15 @@ export const EVENTS: EventItem[] = [
   e('ring-road-live', 'Ring Road Live', 'Amplify', 'Sat 6 Dec', '7:00 PM', 'Ring Road', 6000, 212, 0, 'ibadan'),
 ];
 
+// Akoka Block Party is sold out in the demo, so its page shows resale tickets.
+EVENTS.find((x) => x.slug === 'akoka-block-party')!.soldOut = true;
+
 export const getEvent = (slug: string) => EVENTS.find((x) => x.slug === slug);
 export const eventsFor = (loc: LocationId) => EVENTS.filter((x) => x.location === loc);
 export const eventHref = (ev: EventItem) => (ev.access === 'approval' ? `/rsvp/${ev.slug}` : `/events/${ev.slug}`);
 
 export const naira = (n: number) => '₦' + Math.round(n).toLocaleString('en-NG');
-export const priceLabel = (ev: EventItem) => (ev.price === 0 ? 'Free, approval' : 'From ' + naira(ev.price));
+export const priceLabel = (ev: EventItem) => (ev.soldOut ? 'Sold out, resale open' : ev.price === 0 ? 'Free, approval' : 'From ' + naira(ev.price));
 export const ticketFee = (subtotal: number, count: number) => (count > 0 ? subtotal * 0.03 + 50 * count : 0);
 
 export const TIERS = [

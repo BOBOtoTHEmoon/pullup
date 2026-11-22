@@ -32,9 +32,9 @@ function FakeQR({ seed, size = 150 }: { seed: number; size?: number }) {
 }
 
 const TICKETS = [
-  { title: 'Jaja After Dark', host: 'JAJA HALL SRC', date: 'Fri 28 Nov', doors: '10:00 PM', type: 'Regular, squad of 4', pin: '4819', bg: '#FF5A1F', seed: 20261128 },
-  { title: 'Akoka Block Party', host: 'BLOCK 7 COLLECTIVE', date: 'Fri 5 Dec', doors: '9:00 PM', type: 'VIP', pin: '7302', bg: '#F2D21B', seed: 20261205 },
-  { title: 'Lagos Builders Night', host: 'LAGOS BUILDERS', date: 'Thu 4 Dec', doors: '6:00 PM', type: 'Free, approved', pin: '1166', bg: '#2346FF', seed: 20261204 },
+  { title: 'Jaja After Dark', host: 'JAJA HALL SRC', date: 'Fri 28 Nov', doors: '10:00 PM', type: 'Regular, squad of 4', pin: '4819', pinOn: true, bg: '#FF5A1F', seed: 20261128 },
+  { title: 'Akoka Block Party', host: 'BLOCK 7 COLLECTIVE', date: 'Fri 5 Dec', doors: '9:00 PM', type: 'VIP', pin: '', pinOn: false, bg: '#F2D21B', seed: 20261205 },
+  { title: 'Lagos Builders Night', host: 'LAGOS BUILDERS', date: 'Thu 4 Dec', doors: '6:00 PM', type: 'Free, approved', pin: '', pinOn: false, bg: '#2346FF', seed: 20261204 },
 ];
 
 export default function TicketsPage() {
@@ -78,10 +78,15 @@ export default function TicketsPage() {
         <div className="row" style={{ padding: '8px 16px 18px', gap: 18 }}>
           <FakeQR seed={t.seed} />
           <div className="stack" style={{ gap: 10 }}>
-            <span className="stack" style={{ gap: 2 }}>
-              <span style={{ fontSize: 11, color: '#5B564F' }}>Gate PIN</span>
-              <span style={{ fontSize: 26, letterSpacing: '0.14em', fontWeight: 600 }} className="num">{t.pin}</span>
-            </span>
+            {t.pinOn ? (
+              <span className="stack" style={{ gap: 2 }}>
+                <span style={{ fontSize: 11, color: '#5B564F' }}>Your gate PIN</span>
+                <span style={{ fontSize: 26, letterSpacing: '0.14em', fontWeight: 600 }} className="num">{t.pin}</span>
+                <span style={{ fontSize: 11, color: '#5B564F', lineHeight: 1.4 }}>Only for this ticket, works once, checked against your name.</span>
+              </span>
+            ) : (
+              <span style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.4 }}>Show this code at the gate. It works once.</span>
+            )}
             <span style={{ fontSize: 12, color: '#4A453F', lineHeight: 1.4 }}>Works offline. The moving shine means it is live, not a screenshot.</span>
           </div>
         </div>

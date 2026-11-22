@@ -12,13 +12,15 @@ const TIERS = [
 
 export default function TicketSetup() {
   const [payer, setPayer] = useState<'buyer' | 'me'>('buyer');
-  const [opts, setOpts] = useState({ squads: true, bundle: true, promoters: true });
+  const [opts, setOpts] = useState({ squads: true, bundle: true, promoters: true, resale: true, pin: false });
   const toggle = (k: keyof typeof opts) => setOpts({ ...opts, [k]: !opts[k] });
 
   const switches: [keyof typeof opts, string, string][] = [
     ['squads', 'Allow squads', 'Friends split the cost and pay separately'],
     ['bundle', 'Drink bundle add-on', '₦2,000, collected at the bar'],
     ['promoters', 'Promoter codes', '10% commission on each sale'],
+    ['resale', 'Allow resale', 'Guests can resell at face value or less once you sell out'],
+    ['pin', 'Gate PIN backup', 'Each ticket gets its own one-time PIN for phones that will not scan'],
   ];
 
   return (

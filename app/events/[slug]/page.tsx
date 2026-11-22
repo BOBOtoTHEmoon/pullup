@@ -6,12 +6,19 @@ import { useState } from 'react';
 import { BackLink, Icon, Avatar } from '@/components/ui';
 import { getEvent, PALETTES, TIERS, naira, ticketFee, EVENTS } from '@/lib/data';
 
+const RESALE = [
+  { id: 'r1', tier: 'Regular', note: 'Listed by Femi, 2 hours ago', price: 4000 },
+  { id: 'r2', tier: 'Regular', note: 'Listed by Zainab, yesterday', price: 3500 },
+  { id: 'r3', tier: 'VIP', note: 'Listed by David, yesterday', price: 10500 },
+];
+
 export default function EventPage() {
   const { slug } = useParams<{ slug: string }>();
   const ev = getEvent(slug) ?? EVENTS[0];
   const p = PALETTES[ev.palette];
   const [qty, setQty] = useState<Record<string, number>>({ reg: 1, vip: 0, table: 0 });
   const [bundle, setBundle] = useState(false);
+  const [bought, setBought] = useState('');
 
   const tiers = TIERS.map((t) => ({ ...t, price: Math.round(ev.price * t.mult / 500) * 500 }));
   const count = tiers.reduce((n, t) => n + qty[t.id], 0);
@@ -57,30 +64,54 @@ export default function EventPage() {
           </span>
         </div>
 
-        <div className="stack" style={{ gap: 14 }}>
-          <h2 className="disp" style={{ fontSize: 22 }}>Tickets</h2>
-          <div className="stack">
-            {tiers.map((t) => (
-              <div key={t.id} className="row line" style={{ padding: '16px 0' }}>
-                <div className="stack" style={{ flex: 1, gap: 3 }}>
-                  <span style={{ fontSize: 15, fontWeight: 600 }}>{t.name}</span>
-                  <span className="muted small">{t.note}</span>
-                  <span style={{ fontSize: 14, fontWeight: 600, color: qty[t.id] ? '#FF5A1F' : 'var(--text)' }}>{naira(t.price)}</span>
+        {ev.soldOut ? (
+          <div className="stack" style={{ gap: 14 }}>
+            <div className="stack" style={{ gap: 4 }}>
+              <h2 className="disp" style={{ fontSize: 22 }}>Sold out</h2>
+              <span className="muted" style={{ fontSize: 13, lineHeight: 1.5 }}>These are from people who can&apos;t make it. Prices are capped at face value. When you buy, the seller&apos;s code stops working and you get a fresh one.</span>
+            </div>
+            <div className="stack">
+              {RESALE.map((r) => (
+                <div key={r.id} className="row line" style={{ padding: '14px 0' }}>
+                  <div className="stack" style={{ flex: 1, gap: 2 }}>
+                    <span style={{ fontSize: 15, fontWeight: 600 }}>{r.tier}</span>
+                    <span className="muted small">{r.note}</span>
+                  </div>
+                  <span className="num" style={{ fontSize: 14, fontWeight: 600, marginRight: 4 }}>{naira(r.price)}</span>
+                  <button type="button" className={'btn btn-sm ' + (bought === r.id ? 'btn-ghost' : 'btn-accent')} onClick={() => setBought(r.id)}>
+                    {bought === r.id ? 'Yours' : 'Buy'}
+                  </button>
                 </div>
-                <div className="row" style={{ gap: 4 }}>
-                  <button type="button" className="icon-btn" style={{ width: 44, height: 44, background: 'var(--surface)', fontSize: 18 }} aria-label={`Remove one ${t.name}`} onClick={() => change(t.id, -1, t.max)}>−</button>
-                  <span className="num" style={{ width: 28, textAlign: 'center', fontSize: 16, fontWeight: 600 }}>{qty[t.id]}</span>
-                  <button type="button" className="icon-btn" style={{ width: 44, height: 44, background: 'var(--surface)', fontSize: 18 }} aria-label={`Add one ${t.name}`} onClick={() => change(t.id, 1, t.max)}>+</button>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            <span className="faint small">Seller is paid only after your new ticket is issued.</span>
           </div>
-          <label className="row" style={{ padding: 14, borderRadius: 10, border: `1px solid ${bundle ? '#FF5A1F' : 'rgba(var(--rgb),0.14)'}`, cursor: 'pointer' }}>
-            <input type="checkbox" checked={bundle} onChange={() => setBundle(!bundle)} style={{ width: 20, height: 20, accentColor: '#FF5A1F', margin: 0 }} />
-            <span className="stack" style={{ flex: 1 }}><strong style={{ fontSize: 14 }}>Add a drink bundle</strong><span className="muted small">2 drinks and water, collect at the bar</span></span>
-            <strong>₦2,000</strong>
-          </label>
-        </div>
+        ) : (
+          <div className="stack" style={{ gap: 14 }}>
+            <h2 className="disp" style={{ fontSize: 22 }}>Tickets</h2>
+            <div className="stack">
+              {tiers.map((t) => (
+                <div key={t.id} className="row line" style={{ padding: '16px 0' }}>
+                  <div className="stack" style={{ flex: 1, gap: 3 }}>
+                    <span style={{ fontSize: 15, fontWeight: 600 }}>{t.name}</span>
+                    <span className="muted small">{t.note}</span>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: qty[t.id] ? '#FF5A1F' : 'var(--text)' }}>{naira(t.price)}</span>
+                  </div>
+                  <div className="row" style={{ gap: 4 }}>
+                    <button type="button" className="icon-btn" style={{ width: 44, height: 44, background: 'var(--surface)', fontSize: 18 }} aria-label={`Remove one ${t.name}`} onClick={() => change(t.id, -1, t.max)}>−</button>
+                    <span className="num" style={{ width: 28, textAlign: 'center', fontSize: 16, fontWeight: 600 }}>{qty[t.id]}</span>
+                    <button type="button" className="icon-btn" style={{ width: 44, height: 44, background: 'var(--surface)', fontSize: 18 }} aria-label={`Add one ${t.name}`} onClick={() => change(t.id, 1, t.max)}>+</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <label className="row" style={{ padding: 14, borderRadius: 10, border: `1px solid ${bundle ? '#FF5A1F' : 'rgba(var(--rgb),0.14)'}`, cursor: 'pointer' }}>
+              <input type="checkbox" checked={bundle} onChange={() => setBundle(!bundle)} style={{ width: 20, height: 20, accentColor: '#FF5A1F', margin: 0 }} />
+              <span className="stack" style={{ flex: 1 }}><strong style={{ fontSize: 14 }}>Add a drink bundle</strong><span className="muted small">2 drinks and water, collect at the bar</span></span>
+              <strong>₦2,000</strong>
+            </label>
+          </div>
+        )}
 
         <div className="stack" style={{ gap: 14 }}>
           <h2 className="disp" style={{ fontSize: 22 }}>Hosted by</h2>
@@ -101,7 +132,7 @@ export default function EventPage() {
           <div className="grid2" style={{ gap: '18px 14px' }}>
             {[
               ['Cancelled event', 'Full refund, automatically, within 48 hours.'],
-              ["Can't make it", 'Resell on Pullup up to 2 hours before doors.'],
+              ["Can't make it", 'Resell on Pullup at face value or less, if the host allows it.'],
               ['At the gate', 'Show your code. Works offline.'],
               ['Fees', '3% + ₦50 per ticket. Already in your total.'],
             ].map(([t, d]) => (
@@ -111,7 +142,7 @@ export default function EventPage() {
         </div>
       </div>
 
-      <div className="bar">
+      {!ev.soldOut && <div className="bar">
         <div className="between" style={{ alignItems: 'baseline' }}>
           <span className="muted" style={{ fontSize: 13 }}>{count === 0 ? 'No tickets yet' : `${count} ${count === 1 ? 'ticket' : 'tickets'}, fees included`}</span>
           <span className="num" style={{ fontSize: 20, fontWeight: 700 }}>{naira(total)}</span>
@@ -120,7 +151,7 @@ export default function EventPage() {
           <Link href={`/events/${ev.slug}/squad`} className="btn btn-ghost btn-lg">Start a squad</Link>
           <Link href="/tickets" className="btn btn-accent btn-lg">Get tickets</Link>
         </div>
-      </div>
+      </div>}
     </main>
   );
 }

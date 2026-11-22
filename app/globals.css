@@ -28,9 +28,14 @@
   --outer: #e2ded7;
 }
 
+/* Built-in scale: 85% on phones and tablets, 80% on desktop. */
+:root { --z: 0.85; }
+@media (min-width: 1024px) { :root { --z: 0.8; } }
+
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
+  zoom: var(--z);
   background: var(--outer);
   color: var(--text);
   font-family: 'Poppins', system-ui, sans-serif;
@@ -40,7 +45,7 @@ body {
 }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; color: inherit; cursor: pointer; }
-input, textarea { font: inherit; font-size: 16px; }
+input, textarea { font: inherit; font-size: calc(16px / var(--z)); }
 input::placeholder, textarea::placeholder { color: var(--faint); }
 h1, h2, h3, p { margin: 0; }
 
@@ -48,7 +53,7 @@ h1, h2, h3, p { margin: 0; }
 .app {
   position: relative;
   max-width: 440px;
-  min-height: 100vh;
+  min-height: calc(100vh / var(--z));
   margin: 0 auto;
   background: var(--bg);
   overflow-x: hidden;

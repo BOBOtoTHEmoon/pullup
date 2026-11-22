@@ -18,7 +18,7 @@ export default function Gate() {
   const next = () => { if (s.ok) setInside(inside + 1); setI(i + 1); };
 
   return (
-    <main style={{ position: 'relative', minHeight: '100vh', overflow: 'hidden', background: 'radial-gradient(120% 70% at 50% 35%, #3A332C 0%, #1A1714 55%, #0B0A09 100%)', color: '#F4F1EC' }}>
+    <main style={{ position: 'relative', minHeight: 'calc(100vh / var(--z))', overflow: 'hidden', background: 'radial-gradient(120% 70% at 50% 35%, #3A332C 0%, #1A1714 55%, #0B0A09 100%)', color: '#F4F1EC' }}>
       <div className="between" style={{ position: 'absolute', left: 20, right: 20, top: 20 }}>
         <BackLink href="/host" dark />
         <div className="stack" style={{ alignItems: 'flex-end' }}>
